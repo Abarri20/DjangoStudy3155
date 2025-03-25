@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
-
+#any database adjustments have to be migrated
 class Topic(models.Model):
     name = models.CharField(max_length=200)
 
@@ -14,11 +14,12 @@ class Room(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
-    #participants = 
+    participants = models.ManyToManyField(User, related_name='participants', blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        #changes order of appearance on list, '-' means newest first
         ordering = ['-updated', 'created']
 
     def __str__(self):
@@ -31,6 +32,10 @@ class Message(models.Model):
     body = models.TextField()
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        #changes order of appearance on list, '-' means newest first
+        ordering = ['-updated', 'created']
 
     def __str__(self):
+        #limits the amount of characters present when called plainly no methods
         return self.body[0:50]
